@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+
+<!-- Mirrored from stream.pretty.rip/user/Deagan by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 05 Dec 2024 05:12:36 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrettyStream</title>
+    <script src="https://cdn.tailwindcss.com/"></script>
+    <script defer src="../../cdn.jsdelivr.net/npm/alpinejs%403.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="../../cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        function markNotificationAsRead(notificationId, link) {
+            fetch('/notifications/mark_read', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ notification_ids: [notificationId] })
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const notification = this.notifications.find(n => n.id === notificationId);
+                        if (notification) {
+                            notification.is_read = true;
+                            this.unreadCount--;
+                        }
+                    }
+                }).catch(error => console.error('Error marking notification as read:', error));
+
+            if (link) {
+                setTimeout(() => {
+                    window.location.href = link;
+                }, 100);
+            }
+        }
+    </script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-bg': '#121212',
+                        'dark-card': '#1E1E1E',
+                        'dark-accent': '#2C2C2C',
+                        'brand-primary': '#6366F1'
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(circle at top left, var(--tw-gradient-stops))',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1E1E1E;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #6366F1;
+            border-radius: 4px;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .nav-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        .nav-hover-effect {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-hover-effect::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #6366F1;
+            transition: width 0.3s ease;
+        }
+
+        .nav-hover-effect:hover::after {
+            width: 100%;
+        }
+
+        @keyframes gradient-flow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .gradient-background {
+            background: linear-gradient(-45deg,
+                    #6366F1,
+                    #8B5CF6,
+                    #EC4899,
+                    #6366F1);
+            background-size: 400% 400%;
+            animation: gradient-flow 15s ease infinite;
+        }
+    </style>
+</head>
+
+<body class="bg-dark-bg text-white min-h-screen flex flex-col">
+    <nav x-data="{ 
+        open: false, 
+        notificationsOpen: false, 
+        notifications: [], 
+        unreadCount: 0,
+        fetchNotifications() {
+            if (false) {
+                fetch('/notifications')
+                    .then(response => response.json())
+                    .then(data => {
+                        this.notifications = data;
+                    });
+            }
+        },
+        markAllAsRead() {
+            fetch('/notifications/mark_read', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            }).then(() => {
+                this.notifications.forEach(n => n.is_read = true);
+                this.unreadCount = 0;
+            });
+        }
+    }" class="fixed top-0 left-0 right-0 z-50 bg-dark-card/80 backdrop-blur-md shadow-xl border-b border-dark-accent">
+        <div class="container mx-auto px-3 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <a href="../index.html" class="text-2xl font-bold text-brand-primary flex items-center nav-pulse">
+                        <i class="fas fa-film mr-2"></i>PrettyStream
+                    </a>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-6">
+                    <div class="flex space-x-5 mr-4">
+                        <a href="../movies.html"
+                            class="nav-hover-effect flex items-center text-gray-300 hover:text-brand-primary transition-all group">
+                            <i class="fas fa-video mr-2 transition-transform group-hover:rotate-6"></i>Movies
+                        </a>
+                        <a href="../tv-shows.html"
+                            class="nav-hover-effect flex items-center text-gray-300 hover:text-brand-primary transition-all group">
+                            <i class="fas fa-tv mr-2 transition-transform group-hover:rotate-6"></i>TV Shows
+                        </a>
+                        <a href="../features.html"
+                            class="nav-hover-effect flex items-center text-gray-300 hover:text-brand-primary transition-all group">
+                            <i class="fas fa-star mr-2 transition-transform group-hover:rotate-6"></i>Features
+                        </a>
+                        <a href="../community.html"
+                            class="nav-hover-effect flex items-center text-gray-300 hover:text-brand-primary transition-all group">
+                            <i class="fas fa-users mr-2 transition-transform group-hover:rotate-6"></i>Community
+                        </a>
+                        <a href="../leaderboards.html"
+                            class="nav-hover-effect flex items-center text-gray-300 hover:text-brand-primary transition-all group">
+                            <i class="fas fa-medal mr-2 transition-transform group-hover:rotate-6"></i>Leaderboards
+                        </a>
+                    </div>
+
+                    <div class="relative group">
+                        <form action="https://stream.pretty.rip/search" method="get" class="flex items-center">
+                            <input type="text" name="query" placeholder="Search movies, shows..."
+                                class="bg-dark-accent px-4 py-2 rounded-full w-64 focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all group-hover:ring-2 group-hover:ring-brand-primary/50">
+                            <button type="submit"
+                                class="absolute right-2 top-2 text-gray-400 group-hover:text-brand-primary transition-colors">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    
+                    <a href="../login.html"
+                        class="bg-brand-primary px-4 py-2 rounded-full hover:bg-opacity-80 transition-all">
+                        Login
+                    </a>
+                    
+                </div>
+
+                <div class="md:hidden flex items-center space-x-2">
+                    
+
+                    <button @click="open = !open" class="text-white focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <div x-show="open" x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-90" class="md:hidden mt-4 space-y-4">
+            <div class="flex flex-col space-y-3">
+                <a href="../movies.html" class="flex items-center bg-dark-accent px-4 py-2 rounded-lg">
+                    <i class="fas fa-video mr-3"></i>Movies
+                </a>
+                <a href="../tv-shows.html" class="flex items-center bg-dark-accent px-4 py-2 rounded-lg">
+                    <i class="fas fa-tv mr-3"></i>TV Shows
+                </a>
+                <a href="../features.html" class="flex items-center bg-dark-accent px-4 py-2 rounded-lg">
+
+                    <i class="fas fa-star mr-3"></i>Features
+                </a>
+                <a href="../community.html" class="flex items-center bg-dark-accent px-4 py-2 rounded-lg">
+                    <i class="fas fa-users mr-3"></i>Community
+                </a>
+
+                <form action="https://stream.pretty.rip/search" method="get" class="w-full">
+                    <div class="relative">
+                        <input type="text" name="query" placeholder="Search movies, shows..."
+                            class="w-full bg-dark-accent px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-primary">
+                        <button type="submit" class="absolute right-2 top-2">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </button>
+                    </div>
+                </form>
+
+                
+                <a href="../login.html" class="bg-brand-primary px-4 py-2 rounded-full text-center">
+                    Login
+                </a>
+                
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-20 container mx-auto px-4">
+        
+<div class="container mx-auto px-4 py-8">
+    <div class="bg-gradient-to-r from-dark-accent to-dark-bg rounded-2xl p-6 mb-8 shadow-lg relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-primary to-pink-500"></div>
+        <div class="flex flex-col md:flex-row items-center">
+            <div class="relative mb-4 md:mb-0 md:mr-6">
+                <img src="../static/profile_pictures/4ba4b5c7-a835-45f2-9577-005566a7317c_IMG_1693.jpg"
+                    alt="Deagan" class="w-32 h-32 rounded-full object-cover 
+                           border-4 border-brand-primary 
+                           shadow-lg transform transition-transform hover:scale-105">
+                
+                <span class="absolute bottom-0 right-0 
+                             bg-red-500 
+                             text-white text-xs px-2 py-1 rounded-full">
+                    ADMIN
+                </span>
+                
+            </div>
+
+            <div class="text-center md:text-left flex-grow">
+                <h1 class="text-3xl font-bold text-brand-primary mb-2">
+                    Deagan
+                </h1>
+                
+                <p class="text-gray-400 italic mb-4">
+                    <i class="fas fa-quote-left mr-2"></i>
+                    Hello there!
+                </p>
+                
+                <div class="text-gray-500 space-y-1">
+                    <p>
+                        <i class="fas fa-calendar-alt mr-2"></i>
+                        Joined: November 11, 2024
+                    </p>
+                    <p>
+                        <i class="fas fa-clock mr-2"></i>
+                        Last Login: 2 days ago
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-4 md:mt-0 flex space-x-2">
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-dark-card rounded-2xl p-6 transform transition-all hover:shadow-lg">
+            <h2 class="text-xl font-semibold mb-4 text-brand-primary flex items-center">
+                <i class="fas fa-bookmark mr-3"></i>Watchlist
+                <span class="ml-2 bg-brand-primary/20 text-brand-primary text-sm px-2 py-1 rounded-full">
+                    1
+                </span>
+            </h2>
+            
+            <div class="grid grid-cols-3 gap-4">
+                
+                <a href="../details/movie/1738.html"
+                    class="relative group overflow-hidden rounded-lg">
+                    <img src="../../image.tmdb.org/t/p/w200/td5uOBW41ib1KGz3g1Kc33BdFyj.jpg"
+                        alt="Next"
+                        class="w-full h-40 object-cover transition-transform transform group-hover:scale-110">
+                    <div class="absolute bottom-0 left-0 right-0 
+                                bg-black/50 p-1 text-center text-xs truncate 
+                                opacity-0 group-hover:opacity-100 transition-opacity">
+                        Next
+                    </div>
+                </a>
+                
+            </div>
+            
+        </div>
+
+        <div class="bg-dark-card rounded-2xl p-6 transform transition-all hover:shadow-lg">
+            <h2 class="text-xl font-semibold mb-4 text-brand-primary flex items-center">
+                <i class="fas fa-history mr-3"></i>Recently Viewed
+                <span class="ml-2 bg-brand-primary/20 text-brand-primary text-sm px-2 py-1 rounded-full">
+                    6
+                </span>
+            </h2>
+            
+            <div class="grid grid-cols-3 gap-4">
+                
+                <a href="../details/movie/1241982.html"
+                    class="relative group overflow-hidden rounded-lg">
+                    <img src="../../image.tmdb.org/t/p/w200/yh64qw9mgXBvlaWDi7Q9tpUBAvH.jpg"
+                        alt="Moana 2"
+                        class="w-full h-40 object-cover transition-transform transform group-hover:scale-110">
+                    <div class="absolute bottom-0 left-0 right-0 
+                                bg-black/50 p-1 text-center text-xs truncate 
+                                opacity-0 group-hover:opacity-100 transition-opacity">
+                        Moana 2
+                    </div>
+                </a>
+                
+                <a href="../details/tv/1405.html"
+                    class="relative group overflow-hidden rounded-lg">
+                    <img src="../../image.tmdb.org/t/p/w200/q8dWfc4JwQuv3HayIZeO84jAXED.jpg"
+                        alt="Dexter"
+                        class="w-full h-40 object-cover transition-transform transform group-hover:scale-110">
+                    <div class="absolute bottom-0 left-0 right-0 
+                                bg-black/50 p-1 text-center text-xs truncate 
+                                opacity-0 group-hover:opacity-100 transition-opacity">
+                        Dexter
+                    </div>
+                </a>
+                
+                <a href="../details/tv/1405.html"
+                    class="relative group overflow-hidden rounded-lg">
+                    <img src="../../image.tmdb.org/t/p/w200/q8dWfc4JwQuv3HayIZeO84jAXED.jpg"
+                        alt="Dexter"
+                        class="w-full h-40 object-cover transition-transform transform group-hover:scale-110">
+                    <div class="absolute bottom-0 left-0 right-0 
+                                bg-black/50 p-1 text-center text-xs truncate 
+                                opacity-0 group-hover:opacity-100 transition-opacity">
+                        Dexter
+                    </div>
+                </a>
+                
+                <a href="../details/tv/1405.html"
+                    class="relative group overflow-hidden rounded-lg">
+                    <img src="../../image.tmdb.org/t/p/w200/q8dWfc4JwQuv3HayIZeO84jAXED.jpg"
+                        alt="Dexter"
+                        class="w-full h-40 object-cover transition-transform transform group-hover:scale-110">
+                    <div class="absolute bottom-0 left-0 right-0 
+                                bg-black/50 p-1 text-center text-xs truncate 
+                                opacity-0 group-hover:opacity-100 transition-opacity">
+                        Dexter
+                    </div>
+                </a>
+                
+                <a href="../details/tv/131927.html"
+                    class="relative group overflow-hidden rounded-lg">
+                    <img src="../../image.tmdb.org/t/p/w200/9EBKgrFIsCFSV1RZKWhYUdbtGiv.jpg"
+                        alt="Dexter: New Blood"
+                        class="w-full h-40 object-cover transition-transform transform group-hover:scale-110">
+                    <div class="absolute bottom-0 left-0 right-0 
+                                bg-black/50 p-1 text-center text-xs truncate 
+                                opacity-0 group-hover:opacity-100 transition-opacity">
+                        Dexter: New Blood
+                    </div>
+                </a>
+                
+                <a href="../details/tv/1622.html"
+                    class="relative group overflow-hidden rounded-lg">
+                    <img src="../../image.tmdb.org/t/p/w200/KoYWXbnYuS3b0GyQPkbuexlVK9.jpg"
+                        alt="Supernatural"
+                        class="w-full h-40 object-cover transition-transform transform group-hover:scale-110">
+                    <div class="absolute bottom-0 left-0 right-0 
+                                bg-black/50 p-1 text-center text-xs truncate 
+                                opacity-0 group-hover:opacity-100 transition-opacity">
+                        Supernatural
+                    </div>
+                </a>
+                
+            </div>
+            
+        </div>
+
+        <div class="bg-dark-card rounded-2xl p-6 transform transition-all hover:shadow-lg">
+            <h2 class="text-xl font-semibold mb-4 text-brand-primary flex items-center">
+                <i class="fas fa-chart-bar mr-3"></i>Profile Stats
+            </h2>
+            <div class="space-y-4">
+                
+
+                
+                
+                
+
+                
+                <div class="flex justify-between items-center bg-dark-accent rounded-lg p-3">
+                    <span class="text-gray-400">Watchlist Items</span>
+                    <span class="bg-brand-primary/20 text-brand-primary px-3 py-1 rounded-full font-semibold">
+                        1
+                    </span>
+                </div>
+                
+                <div class="flex justify-between items-center bg-dark-accent rounded-lg p-3">
+                    <span class="text-gray-400">Viewed Content</span>
+                    <span class="bg-brand-primary/20 text-brand-primary px-3 py-1 rounded-full font-semibold">
+                        126
+                    </span>
+                </div>
+                
+                <div class="flex justify-between items-center bg-dark-accent rounded-lg p-3">
+                    <span class="text-gray-400">Account Type</span>
+                    <span class="bg-brand-primary/20 text-brand-primary px-3 py-1 rounded-full font-semibold">
+                        Admin
+                    </span>
+                </div>
+                
+                <div class="flex justify-between items-center bg-dark-accent rounded-lg p-3">
+                    <span class="text-gray-400">Total Profile Views</span>
+                    <span class="bg-brand-primary/20 text-brand-primary px-3 py-1 rounded-full font-semibold">
+                        38
+                    </span>
+                </div>
+                
+                <div class="flex justify-between items-center bg-dark-accent rounded-lg p-3">
+                    <span class="text-gray-400">Recent Profile Views (30 days)</span>
+                    <span class="bg-brand-primary/20 text-brand-primary px-3 py-1 rounded-full font-semibold">
+                        88
+                    </span>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 mt-8">
+        <div class="bg-dark-card rounded-2xl p-6 transform transition-all hover:shadow-lg">
+            <h2 class="text-xl font-semibold mb-4 text-brand-primary flex items-center">
+                <i class="fas fa-comment-dots mr-3"></i>Community Contributions
+            </h2>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center bg-dark-accent rounded-lg p-3">
+                    <span class="text-gray-400">Total Comments</span>
+                    <span class="bg-brand-primary/20 text-brand-primary px-3 py-1 rounded-full font-semibold">
+                        6
+                    </span>
+                </div>
+                <div class="flex justify-between items-center bg-dark-accent rounded-lg p-3">
+                    <span class="text-gray-400">Reviews Written</span>
+                    <span class="bg-brand-primary/20 text-brand-primary px-3 py-1 rounded-full font-semibold">
+                        0
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-dark-card rounded-2xl p-6 transform transition-all hover:shadow-lg">
+            <h2 class="text-xl font-semibold mb-4 text-brand-primary flex items-center">
+                <i class="fas fa-trophy mr-3"></i>Achievements
+            </h2>
+            <div class="grid grid-cols-3 gap-4">
+                
+
+                
+                <div class="text-center group">
+                    <div class="">
+                        <i class="fas fa-medal text-3xl 
+                                          text-brand-primary"></i>
+                        <p class="text-xs mt-2 text-brand-primary">
+                            First Watch
+                        </p>
+                    </div>
+                    
+                    <div class="hidden group-hover:block absolute bg-dark-accent 
+                                        text-xs p-2 rounded-lg shadow-lg z-10 w-48 -mt-2">
+                        First content watched
+                    </div>
+                    
+                </div>
+                
+                <div class="text-center group">
+                    <div class="">
+                        <i class="fas fa-medal text-3xl 
+                                          text-brand-primary"></i>
+                        <p class="text-xs mt-2 text-brand-primary">
+                            Binge Watcher
+                        </p>
+                    </div>
+                    
+                    <div class="hidden group-hover:block absolute bg-dark-accent 
+                                        text-xs p-2 rounded-lg shadow-lg z-10 w-48 -mt-2">
+                        Watched 10+ shows
+                    </div>
+                    
+                </div>
+                
+                <div class="text-center group">
+                    <div class="">
+                        <i class="fas fa-medal text-3xl 
+                                          text-brand-primary"></i>
+                        <p class="text-xs mt-2 text-brand-primary">
+                            Movie Buff
+                        </p>
+                    </div>
+                    
+                    <div class="hidden group-hover:block absolute bg-dark-accent 
+                                        text-xs p-2 rounded-lg shadow-lg z-10 w-48 -mt-2">
+                        Watched 20+ movies
+                    </div>
+                    
+                </div>
+                
+                <div class="text-center group">
+                    <div class="opacity-30">
+                        <i class="fas fa-medal text-3xl 
+                                          text-gray-500"></i>
+                        <p class="text-xs mt-2 text-gray-500">
+                            Community Star
+                        </p>
+                    </div>
+                    
+                </div>
+                
+                <div class="text-center group">
+                    <div class="opacity-30">
+                        <i class="fas fa-medal text-3xl 
+                                          text-gray-500"></i>
+                        <p class="text-xs mt-2 text-gray-500">
+                            Review Master
+                        </p>
+                    </div>
+                    
+                </div>
+                
+                <div class="text-center group">
+                    <div class="">
+                        <i class="fas fa-medal text-3xl 
+                                          text-brand-primary"></i>
+                        <p class="text-xs mt-2 text-brand-primary">
+                            Profile Complete
+                        </p>
+                    </div>
+                    
+                    <div class="hidden group-hover:block absolute bg-dark-accent 
+                                        text-xs p-2 rounded-lg shadow-lg z-10 w-48 -mt-2">
+                        Profile fully set up
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+    </main>
+
+    <footer class="bg-dark-card py-8 mt-8">
+        <div class="container mx-auto px-4 grid md:grid-cols-4 gap-8">
+            <div class="mb-6 md:mb-0">
+                <h4 class="font-bold text-lg mb-4 text-brand-primary">PrettyStream</h4>
+                <p class="text-gray-400">Your ultimate streaming companion</p>
+            </div>
+            <div class="mb-6 md:mb-0">
+                <h5 class="font-semibold mb-3">Quick Links</h5>
+                <ul class="space-y-2">
+                    <li><a href="../index.html" class="hover:text-brand-primary">Home</a></li>
+                    <li><a href="../movies.html" class="hover:text-brand-primary">Movies</a></li>
+                    <li><a href="../tv-shows.html" class="hover:text-brand-primary">TV Shows</a></li>
+                    <li><a href="../features.html" class="hover:text-brand-primary">Features</a></li>
+                </ul>
+            </div>
+            <div class="mb-6 md:mb-0">
+                <h5 class="font-semibold mb-3">Legal</h5>
+                <ul class="space-y-2">
+                    <li><a href="#" class="hover:text-brand-primary">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-brand-primary">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="font-semibold mb-3">Connect</h5>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-2xl hover:text-brand-primary"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-2xl hover:text-brand-primary"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-2xl hover:text-brand-primary"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-8 text-gray-500 px-4">
+            © 2024 PrettyStream. All Rights Reserved.
+        </div>
+    </footer>
+</body>
+
+
+<!-- Mirrored from stream.pretty.rip/user/Deagan by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 05 Dec 2024 05:12:37 GMT -->
+</html>
