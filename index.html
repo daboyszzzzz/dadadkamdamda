@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+
+<!-- Mirrored from stream.pretty.rip/ by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 05 Dec 2024 05:11:29 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrettyStream</title>
+    <script src="https://cdn.tailwindcss.com/"></script>
+    <script defer src="../cdn.jsdelivr.net/npm/alpinejs%403.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="../cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        function markNotificationAsRead(notificationId, link) {
+            fetch('/notifications/mark_read', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ notification_ids: [notificationId] })
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const notification = this.notifications.find(n => n.id === notificationId);
+                        if (notification) {
+                            notification.is_read = true;
+                            this.unreadCount--;
+                        }
+                    }
+                }).catch(error => console.error('Error marking notification as read:', error));
+
+            if (link) {
+                setTimeout(() => {
+                    window.location.href = link;
+                }, 100);
+            }
+        }
+    </script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-bg': '#121212',
+                        'dark-card': '#1E1E1E',
+                        'dark-accent': '#2C2C2C',
+                        'brand-primary': '#6366F1'
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(circle at top left, var(--tw-gradient-stops))',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1E1E1E;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #6366F1;
+            border-radius: 4px;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .nav-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        .nav-hover-effect {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-hover-effect::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #6366F1;
+            transition: width 0.3s ease;
+        }
+
+        .nav-hover-effect:hover::after {
+            width: 100%;
+        }
+
+        @keyframes gradient-flow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .gradient-background {
+            background: linear-gradient(-45deg,
+                    #6366F1,
+                    #8B5CF6,
+                    #EC4899,
+                    #6366F1);
+            background-size: 400% 400%;
+            animation: gradient-flow 15s ease infinite;
+        }
+    </style>
+</head>
+
+<body class="bg-dark-bg text-white min-h-screen flex flex-col">
+    <nav x-data="{ 
+        open: false, 
+        notificationsOpen: false, 
+        notifications: [], 
+        unreadCount: 0,
+        fetchNotifications() {
+            if (false) {
+                fetch('/notifications')
+                    .then(response => response.json())
+                    .then(data => {
+                        this.notifications = data;
+                    });
+            }
+        },
+        markAllAsRead() {
+            fetch('/notifications/mark_read', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            }).then(() => {
+                this.notifications.forEach(n => n.is_read = true);
+                this.unreadCount = 0;
+            });
+        }
+    }" class="fixed top-0 left-0 right-0 z-50 bg-dark-card/80 backdrop-blur-md shadow-xl border-b border-dark-accent">
+        <div class="container mx-auto px-3 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-2xl font-bold text-brand-primary flex items-center nav-pulse">
+                        <i class="fas fa-film mr-2"></i>PrettyStream
+                    </a>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-6">
+                    <div class="flex space-x-5 mr-4">
+                        <a href="movies.html"
+                            class="nav-hover-effect flex items-center text-gray-300 hover:text-brand-primary transition-all group">
+                            <i class="fas fa-video mr-2 transition-transform group-hover:rotate-6"></i>Movies
+                        </a>
+                        <a href="tv-shows.html"
+                            class="nav-hover-effect flex items-center text-gray-300 hover:text-brand-primary transition-all group">
+                            <i class="fas fa-tv mr-2 transition-transform group-hover:rotate-6"></i>TV Shows
+                        </a>
+                        <a href="features.html"
+                            class="nav-hover-effect flex items-center text-gray-300 hover:text-brand-primary transition-all group">
+                            <i class="fas fa-star mr-2 transition-transform group-hover:rotate-6"></i>Features
+                        </a>
+                        <a href="community.html"
+                            class="nav-hover-effect flex items-center text-gray-300 hover:text-brand-primary transition-all group">
+                            <i class="fas fa-users mr-2 transition-transform group-hover:rotate-6"></i>Community
+                        </a>
+                        <a href="leaderboards.html"
+                            class="nav-hover-effect flex items-center text-gray-300 hover:text-brand-primary transition-all group">
+                            <i class="fas fa-medal mr-2 transition-transform group-hover:rotate-6"></i>Leaderboards
+                        </a>
+                    </div>
+
+                    <div class="relative group">
+                        <form action="https://stream.pretty.rip/search" method="get" class="flex items-center">
+                            <input type="text" name="query" placeholder="Search movies, shows..."
+                                class="bg-dark-accent px-4 py-2 rounded-full w-64 focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all group-hover:ring-2 group-hover:ring-brand-primary/50">
+                            <button type="submit"
+                                class="absolute right-2 top-2 text-gray-400 group-hover:text-brand-primary transition-colors">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    
+                    <a href="login.html"
+                        class="bg-brand-primary px-4 py-2 rounded-full hover:bg-opacity-80 transition-all">
+                        Login
+                    </a>
+                    
+                </div>
+
+                <div class="md:hidden flex items-center space-x-2">
+                    
+
+                    <button @click="open = !open" class="text-white focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <div x-show="open" x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-90" class="md:hidden mt-4 space-y-4">
+            <div class="flex flex-col space-y-3">
+                <a href="movies.html" class="flex items-center bg-dark-accent px-4 py-2 rounded-lg">
+                    <i class="fas fa-video mr-3"></i>Movies
+                </a>
+                <a href="tv-shows.html" class="flex items-center bg-dark-accent px-4 py-2 rounded-lg">
+                    <i class="fas fa-tv mr-3"></i>TV Shows
+                </a>
+                <a href="features.html" class="flex items-center bg-dark-accent px-4 py-2 rounded-lg">
+
+                    <i class="fas fa-star mr-3"></i>Features
+                </a>
+                <a href="community.html" class="flex items-center bg-dark-accent px-4 py-2 rounded-lg">
+                    <i class="fas fa-users mr-3"></i>Community
+                </a>
+
+                <form action="https://stream.pretty.rip/search" method="get" class="w-full">
+                    <div class="relative">
+                        <input type="text" name="query" placeholder="Search movies, shows..."
+                            class="w-full bg-dark-accent px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-primary">
+                        <button type="submit" class="absolute right-2 top-2">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </button>
+                    </div>
+                </form>
+
+                
+                <a href="login.html" class="bg-brand-primary px-4 py-2 rounded-full text-center">
+                    Login
+                </a>
+                
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-20 container mx-auto px-4">
+        
+<div class="relative min-h-screen flex items-center overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-dark-bg via-dark-bg to-dark-card opacity-90 z-0"></div>
+
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div data-aos="fade-right">
+                <div class="inline-block bg-dark-accent/50 px-4 py-2 rounded-full mb-4">
+                    <span class="text-brand-primary">🚀 New Features Available</span>
+                </div>
+
+                <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                    Stream. <br />
+                    <span class="text-transparent bg-clip-text gradient-background">
+                        Discover. Enjoy.
+                    </span>
+                </h1>
+
+                <p class="text-xl text-gray-300 mb-8 max-w-xl">
+                    Immerse yourself in a world of endless entertainment.
+                    Personalized recommendations, community-driven insights,
+                    and a seamless streaming experience.
+                </p>
+
+                <div class="flex space-x-4">
+                    
+                    <a href="register.html" class="bg-brand-primary px-6 py-3 rounded-full 
+                              hover:scale-105 transition-transform 
+                              flex items-center space-x-2 
+                              shadow-lg shadow-brand-primary/30 
+                              font-semibold">
+                        <i class="fas fa-rocket"></i>
+                        <span>Get Started</span>
+                    </a>
+                    
+                    <a href="movies.html" class="border border-gray-600 px-6 py-3 rounded-full 
+                              hover:bg-dark-accent transition-all 
+                              flex items-center space-x-2 
+                              hover:border-brand-primary">
+                        <i class="fas fa-play-circle"></i>
+                        <span>Explore Content</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="hidden md:block" data-aos="fade-left">
+                <div class="relative">
+                    <div class="grid grid-cols-3 gap-4 relative z-10">
+                        
+                        <div class="transform transition-all 
+                                    hover:scale-110 hover:z-20 
+                                    hover:rotate-3 
+                                    hover:shadow-2xl 
+                                    hover:shadow-brand-primary/30 
+                                    rounded-lg">
+                            <img src="../image.tmdb.org/t/p/w500/bX6dx2U4hOk1esI7mYwtD3cEKdC.jpg" alt="That Christmas"
+                                class="rounded-lg object-cover">
+                        </div>
+                        
+                        <div class="transform transition-all 
+                                    hover:scale-110 hover:z-20 
+                                    hover:rotate-3 
+                                    hover:shadow-2xl 
+                                    hover:shadow-brand-primary/30 
+                                    rounded-lg">
+                            <img src="../image.tmdb.org/t/p/w500/yh64qw9mgXBvlaWDi7Q9tpUBAvH.jpg" alt="Moana 2"
+                                class="rounded-lg object-cover">
+                        </div>
+                        
+                        <div class="transform transition-all 
+                                    hover:scale-110 hover:z-20 
+                                    hover:rotate-3 
+                                    hover:shadow-2xl 
+                                    hover:shadow-brand-primary/30 
+                                    rounded-lg">
+                            <img src="../image.tmdb.org/t/p/w500/ugQkpGajKFQ8eyOEhGheR0HfWQ.jpg" alt="Juror #2"
+                                class="rounded-lg object-cover">
+                        </div>
+                        
+                        <div class="transform transition-all 
+                                    hover:scale-110 hover:z-20 
+                                    hover:rotate-3 
+                                    hover:shadow-2xl 
+                                    hover:shadow-brand-primary/30 
+                                    rounded-lg">
+                            <img src="../image.tmdb.org/t/p/w500/dN7wZpobVfVVqBaFH9qFc6k45hq.jpg" alt="The Children&#39;s Train"
+                                class="rounded-lg object-cover">
+                        </div>
+                        
+                        <div class="transform transition-all 
+                                    hover:scale-110 hover:z-20 
+                                    hover:rotate-3 
+                                    hover:shadow-2xl 
+                                    hover:shadow-brand-primary/30 
+                                    rounded-lg">
+                            <img src="../image.tmdb.org/t/p/w500/xDGbZ0JJ3mYaGKy4Nzd9Kph6M9L.jpg" alt="Wicked"
+                                class="rounded-lg object-cover">
+                        </div>
+                        
+                        <div class="transform transition-all 
+                                    hover:scale-110 hover:z-20 
+                                    hover:rotate-3 
+                                    hover:shadow-2xl 
+                                    hover:shadow-brand-primary/30 
+                                    rounded-lg">
+                            <img src="../image.tmdb.org/t/p/w500/fRbDHbGBXg6kwQYr3CRYeKPJW5q.jpg" alt="Dear Santa"
+                                class="rounded-lg object-cover">
+                        </div>
+                        
+                    </div>
+                    <div class="absolute -top-12 -left-12 w-48 h-48 
+                                bg-brand-primary/20 rounded-full 
+                                blur-3xl opacity-50 z-0"></div>
+                    <div class="absolute -bottom-12 -right-12 w-48 h-48 
+                                bg-purple-500/20 rounded-full 
+                                blur-3xl opacity-50 z-0"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="bg-dark-card py-16 relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-1 
+                bg-gradient-to-r from-brand-primary to-pink-500"></div>
+
+    <div class="container mx-auto px-4 text-center relative z-10">
+        <h2 class="text-4xl font-bold mb-12" data-aos="fade-up">
+            Why PrettyStream Stands Out
+        </h2>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-dark-accent p-8 rounded-xl 
+                        hover:bg-dark-bg transition-all 
+                        hover:border-brand-primary 
+                        border border-transparent
+                        group" data-aos="zoom-in" data-aos-delay="100">
+                <div class="bg-brand-primary/10 w-20 h-20 rounded-full 
+                            flex items-center justify-center mx-auto mb-4
+                            group-hover:rotate-180 transition-all">
+                    <i class="fas fa-ban text-3xl text-brand-primary"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Minimal Ads</h3>
+                <p class="text-gray-400">Only one popup ad per movie/show, clicking anywhere on the site won't trigger ads.
+                </p>
+            </div>
+
+            <div class="bg-dark-accent p-8 rounded-xl 
+                        hover:bg-dark-bg transition-all 
+                        hover:border-brand-primary 
+                        border border-transparent
+                        group" data-aos="zoom-in" data-aos-delay="200">
+                <div class="bg-green-500/10 w-20 h-20 rounded-full 
+                            flex items-center justify-center mx-auto mb-4
+                            group-hover:rotate-180 transition-all">
+                    <i class="fas fa-users text-3xl text-green-500"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Community Driven</h3>
+                <p class="text-gray-400">Real insights from genuine viewers, see what other people are watching.</p>
+            </div>
+
+            <div class="bg-dark-accent p-8 rounded-xl 
+                        hover:bg-dark-bg transition-all 
+                        hover:border-brand-primary 
+                        border border-transparent
+                        group" data-aos="zoom-in" data-aos-delay="300">
+                <div class="bg-pink-500/10 w-20 h-20 rounded-full 
+                            flex items-center justify-center mx-auto mb-4
+                            group-hover:rotate-180 transition-all">
+                    <i class="fas fa-mobile-alt text-3xl text-pink-500"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Multi-Platform</h3>
+                <p class="text-gray-400">Whether it be from your computer or mobile device, as long as it has internet, you can use our site.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold" data-aos="fade-up">
+                Trending Right Now
+            </h2>
+            <p class="text-gray-400 mt-4" data-aos="fade-up" data-aos-delay="100">
+                Discover the hottest content across movies and TV shows
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <div data-aos="fade-right">
+                <h3 class="text-2xl font-bold mb-6">Top Movies</h3>
+                <div class="grid grid-cols-4 gap-4">
+                    
+                    <a href="details/movie/645757.html" class="relative group overflow-hidden rounded-lg">
+                        <img src="../image.tmdb.org/t/p/w500/bX6dx2U4hOk1esI7mYwtD3cEKdC.jpg" alt="That Christmas" class="rounded-lg transform transition-all 
+                                    group-hover:scale-110 group-hover:brightness-75">
+                        <div class="absolute bottom-0 left-0 right-0 
+                                    bg-black bg-opacity-50 opacity-0 
+                                    group-hover:opacity-100 
+                                    transition-all p-2 text-center">
+                            <p class="text-sm truncate">That Christmas</p>
+                        </div>
+                    </a>
+                    
+                    <a href="details/movie/1241982.html" class="relative group overflow-hidden rounded-lg">
+                        <img src="../image.tmdb.org/t/p/w500/yh64qw9mgXBvlaWDi7Q9tpUBAvH.jpg" alt="Moana 2" class="rounded-lg transform transition-all 
+                                    group-hover:scale-110 group-hover:brightness-75">
+                        <div class="absolute bottom-0 left-0 right-0 
+                                    bg-black bg-opacity-50 opacity-0 
+                                    group-hover:opacity-100 
+                                    transition-all p-2 text-center">
+                            <p class="text-sm truncate">Moana 2</p>
+                        </div>
+                    </a>
+                    
+                    <a href="details/movie/1106739.html" class="relative group overflow-hidden rounded-lg">
+                        <img src="../image.tmdb.org/t/p/w500/ugQkpGajKFQ8eyOEhGheR0HfWQ.jpg" alt="Juror #2" class="rounded-lg transform transition-all 
+                                    group-hover:scale-110 group-hover:brightness-75">
+                        <div class="absolute bottom-0 left-0 right-0 
+                                    bg-black bg-opacity-50 opacity-0 
+                                    group-hover:opacity-100 
+                                    transition-all p-2 text-center">
+                            <p class="text-sm truncate">Juror #2</p>
+                        </div>
+                    </a>
+                    
+                    <a href="details/movie/1180634.html" class="relative group overflow-hidden rounded-lg">
+                        <img src="../image.tmdb.org/t/p/w500/dN7wZpobVfVVqBaFH9qFc6k45hq.jpg" alt="The Children&#39;s Train" class="rounded-lg transform transition-all 
+                                    group-hover:scale-110 group-hover:brightness-75">
+                        <div class="absolute bottom-0 left-0 right-0 
+                                    bg-black bg-opacity-50 opacity-0 
+                                    group-hover:opacity-100 
+                                    transition-all p-2 text-center">
+                            <p class="text-sm truncate">The Children&#39;s Train</p>
+                        </div>
+                    </a>
+                    
+                </div>
+            </div>
+
+            <div data-aos="fade-left">
+                <h3 class="text-2xl font-bold mb-6">Top TV Shows</h3>
+                <div class="grid grid-cols-4 gap-4">
+                    
+                    <a href="details/tv/226529.html" class="relative group overflow-hidden rounded-lg">
+                        <img src="../image.tmdb.org/t/p/w500/ykchqPqmXp2Vk2s7JMyevQGfcVM.jpg" alt="Light Shop" class="rounded-lg transform transition-all 
+                                    group-hover:scale-110 group-hover:brightness-75">
+                        <div class="absolute bottom-0 left-0 right-0 
+                                    bg-black bg-opacity-50 opacity-0 
+                                    group-hover:opacity-100 
+                                    transition-all p-2 text-center">
+                            <p class="text-sm truncate">Light Shop</p>
+                        </div>
+                    </a>
+                    
+                    <a href="details/tv/202879.html" class="relative group overflow-hidden rounded-lg">
+                        <img src="../image.tmdb.org/t/p/w500/srQbJhLRKoAwRrNN5ga7webPHbC.jpg" alt="Star Wars: Skeleton Crew" class="rounded-lg transform transition-all 
+                                    group-hover:scale-110 group-hover:brightness-75">
+                        <div class="absolute bottom-0 left-0 right-0 
+                                    bg-black bg-opacity-50 opacity-0 
+                                    group-hover:opacity-100 
+                                    transition-all p-2 text-center">
+                            <p class="text-sm truncate">Star Wars: Skeleton Crew</p>
+                        </div>
+                    </a>
+                    
+                    <a href="details/tv/73982.html" class="relative group overflow-hidden rounded-lg">
+                        <img src="../image.tmdb.org/t/p/w500/uuKmigg4WuduZMJKIzJ8UP02pRg.jpg" alt="Day and Night" class="rounded-lg transform transition-all 
+                                    group-hover:scale-110 group-hover:brightness-75">
+                        <div class="absolute bottom-0 left-0 right-0 
+                                    bg-black bg-opacity-50 opacity-0 
+                                    group-hover:opacity-100 
+                                    transition-all p-2 text-center">
+                            <p class="text-sm truncate">Day and Night</p>
+                        </div>
+                    </a>
+                    
+                    <a href="details/tv/271001.html" class="relative group overflow-hidden rounded-lg">
+                        <img src="../image.tmdb.org/t/p/w500/jXeqz0ul6d3CC8VKMgbGrY29vX4.jpg" alt="Tomorrow and I" class="rounded-lg transform transition-all 
+                                    group-hover:scale-110 group-hover:brightness-75">
+                        <div class="absolute bottom-0 left-0 right-0 
+                                    bg-black bg-opacity-50 opacity-0 
+                                    group-hover:opacity-100 
+                                    transition-all p-2 text-center">
+                            <p class="text-sm truncate">Tomorrow and I</p>
+                        </div>
+                    </a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="bg-dark-card py-16">
+    <div class="container mx-auto px-4">
+        <div class="grid md:grid-cols-2 items-center gap-12">
+            <div data-aos="fade-right">
+                <h2 class="text-4xl font-bold mb-6">
+                    Join Our Growing Community
+                </h2>
+                <p class="text-xl text-gray-300 mb-8">
+                    Connect with movie and TV show enthusiasts.
+                    Share reviews, get recommendations, and be part
+                    of a vibrant streaming community.
+                </p>
+
+                <div class="flex items-center space-x-4">
+                    <div class="flex -space-x-4">
+                        <img src="../randomuser.me/api/portraits/men/32.jpg" alt="Community Member"
+                            class="w-12 h-12 rounded-full border-2 border-dark-bg">
+                        <img src="../randomuser.me/api/portraits/women/44.jpg" alt="Community Member"
+                            class="w-12 h-12 rounded-full border-2 border-dark-bg">
+                        <img src="../randomuser.me/api/portraits/men/86.jpg" alt="Community Member"
+                            class="w-12 h-12 rounded-full border-2 border-dark-bg">
+                        <div class="w-12 h-12 bg-brand-primary text-white 
+                                    rounded-full flex items-center justify-center 
+                                    font-bold">
+                            +100
+                        </div>
+                    </div>
+
+                    
+                    <a href="register.html" class="bg-brand-primary px-6 py-3 rounded-full 
+                              hover:scale-105 transition-transform">
+                        Join Now
+                    </a>
+                    
+                </div>
+            </div>
+
+            <div data-aos="fade-left" class="relative">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-dark-accent p-6 rounded-lg">
+                        <i class="fas fa-comment text-brand-primary text-3xl mb-4"></i>
+                        <h3 class="font-semibold mb-2">Real Reviews</h3>
+                        <p class="text-sm text-gray-400">
+                            Honest, unfiltered feedback from real viewers
+                        </p>
+                    </div>
+
+                    <div class="bg-dark-accent p-6 rounded-lg mt-8">
+                        <i class="fas fa-star text-yellow-500 text-3xl mb-4"></i>
+                        <h3 class="font-semibold mb-2">Ratings & Insights</h3>
+                        <p class="text-sm text-gray-400">
+                            Comprehensive ratings and deep content insights
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    </main>
+
+    <footer class="bg-dark-card py-8 mt-8">
+        <div class="container mx-auto px-4 grid md:grid-cols-4 gap-8">
+            <div class="mb-6 md:mb-0">
+                <h4 class="font-bold text-lg mb-4 text-brand-primary">PrettyStream</h4>
+                <p class="text-gray-400">Your ultimate streaming companion</p>
+            </div>
+            <div class="mb-6 md:mb-0">
+                <h5 class="font-semibold mb-3">Quick Links</h5>
+                <ul class="space-y-2">
+                    <li><a href="index.html" class="hover:text-brand-primary">Home</a></li>
+                    <li><a href="movies.html" class="hover:text-brand-primary">Movies</a></li>
+                    <li><a href="tv-shows.html" class="hover:text-brand-primary">TV Shows</a></li>
+                    <li><a href="features.html" class="hover:text-brand-primary">Features</a></li>
+                </ul>
+            </div>
+            <div class="mb-6 md:mb-0">
+                <h5 class="font-semibold mb-3">Legal</h5>
+                <ul class="space-y-2">
+                    <li><a href="#" class="hover:text-brand-primary">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-brand-primary">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="font-semibold mb-3">Connect</h5>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-2xl hover:text-brand-primary"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-2xl hover:text-brand-primary"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-2xl hover:text-brand-primary"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-8 text-gray-500 px-4">
+            © 2024 PrettyStream. All Rights Reserved.
+        </div>
+    </footer>
+</body>
+
+
+<!-- Mirrored from stream.pretty.rip/ by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 05 Dec 2024 05:11:37 GMT -->
+</html>

@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+
+<!-- Mirrored from stream.pretty.rip/movies?page=13 by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 05 Dec 2024 05:18:10 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrettyStream</title>
+    <script src="https://cdn.tailwindcss.com/"></script>
+    <script defer src="../cdn.jsdelivr.net/npm/alpinejs%403.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="../cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        function markNotificationAsRead(notificationId, link) {
+            fetch('/notifications/mark_read', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ notification_ids: [notificationId] })
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const notification = this.notifications.find(n => n.id === notificationId);
+                        if (notification) {
+                            notification.is_read = true;
+                            this.unreadCount--;
+                        }
+                    }
+                }).catch(error => console.error('Error marking notification as read:', error));
+
+            if (link) {
+                setTimeout(() => {
+                    window.location.href = link;
+                }, 100);
+            }
+        }
+    </script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-bg': '#121212',
+                        'dark-card': '#1E1E1E',
+                        'dark-accent': '#2C2C2C',
+                        'brand-primary': '#6366F1'
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(circle at top left, var(--tw-gradient-stops))',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1E1E1E;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #6366F1;
+            border-radius: 4px;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .nav-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        .nav-hover-effect {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-hover-effect::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #6366F1;
+            transition: width 0.3s ease;
+        }
+
+        .nav-hover-effect:hover::after {
+            width: 100%;
+        }
+
+        @keyframes gradient-flow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .gradient-background {
+            background: linear-gradient(-45deg,
+                    #6366F1,
+                    #8B5CF6,
+                    #EC4899,
+                    #6366F1);
+            background-size: 400% 400%;
+            animation: gradient-flow 15s ease infinite;
+        }
+    </style>
+</head>
+
+<body class="bg-dark-bg text-white min-h-screen flex flex-col">
+    <nav x-data="{ 
+        open: false, 
+        notificationsOpen: false, 
+        notifications: [], 
+        unreadCount: 0,
+        fetchNotifications() {
+            if (false) {
+                fetch('/notifications')
+                    .then(response => response.json())
+                    .then(data => {
+                        this.notifications = data;
+                    });
+            }
+        },
+        markAllAsRead() {
+            fetch('/notifications/mark_read', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            }).then(() => {
+                this.notifications.forEach(n => n.is_read = true);
+                this.unreadCount = 0;
+            });
+        }
+    }" class="fixed top-0 left-0 right-0 z-50 bg-dark-card/80 backdrop-blur-md shadow-xl border-b border-dark-accent">
+        <div class="container mx-auto px-3 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-2xl font-bold text-brand-primary flex items-center nav-pulse">
+                        <i class="fas fa-film mr-2"></i>PrettyStream
+                    </a>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-6">
+                    <div class="flex space-x-5 mr-4">
+                        <a href="movies.html"
+                            class="nav-hover-effect flex items-center text-gray-300 hover:text-brand-primary transition-all group">
+                            <i class="fas fa-video mr-2 transition-transform group-hover:rotate-6"></i>Movies
+                        </a>
+                        <a href="tv-shows.html"
+                            class="nav-hover-effect flex items-center text-gray-300 hover:text-brand-primary transition-all group">
+                            <i class="fas fa-tv mr-2 transition-transform group-hover:rotate-6"></i>TV Shows
+                        </a>
+                        <a href="features.html"
+                            class="nav-hover-effect flex items-center text-gray-300 hover:text-brand-primary transition-all group">
+                            <i class="fas fa-star mr-2 transition-transform group-hover:rotate-6"></i>Features
+                        </a>
+                        <a href="community.html"
+                            class="nav-hover-effect flex items-center text-gray-300 hover:text-brand-primary transition-all group">
+                            <i class="fas fa-users mr-2 transition-transform group-hover:rotate-6"></i>Community
+                        </a>
+                        <a href="leaderboards.html"
+                            class="nav-hover-effect flex items-center text-gray-300 hover:text-brand-primary transition-all group">
+                            <i class="fas fa-medal mr-2 transition-transform group-hover:rotate-6"></i>Leaderboards
+                        </a>
+                    </div>
+
+                    <div class="relative group">
+                        <form action="https://stream.pretty.rip/search" method="get" class="flex items-center">
+                            <input type="text" name="query" placeholder="Search movies, shows..."
+                                class="bg-dark-accent px-4 py-2 rounded-full w-64 focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all group-hover:ring-2 group-hover:ring-brand-primary/50">
+                            <button type="submit"
+                                class="absolute right-2 top-2 text-gray-400 group-hover:text-brand-primary transition-colors">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    
+                    <a href="login.html"
+                        class="bg-brand-primary px-4 py-2 rounded-full hover:bg-opacity-80 transition-all">
+                        Login
+                    </a>
+                    
+                </div>
+
+                <div class="md:hidden flex items-center space-x-2">
+                    
+
+                    <button @click="open = !open" class="text-white focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <div x-show="open" x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-90" class="md:hidden mt-4 space-y-4">
+            <div class="flex flex-col space-y-3">
+                <a href="movies.html" class="flex items-center bg-dark-accent px-4 py-2 rounded-lg">
+                    <i class="fas fa-video mr-3"></i>Movies
+                </a>
+                <a href="tv-shows.html" class="flex items-center bg-dark-accent px-4 py-2 rounded-lg">
+                    <i class="fas fa-tv mr-3"></i>TV Shows
+                </a>
+                <a href="features.html" class="flex items-center bg-dark-accent px-4 py-2 rounded-lg">
+
+                    <i class="fas fa-star mr-3"></i>Features
+                </a>
+                <a href="community.html" class="flex items-center bg-dark-accent px-4 py-2 rounded-lg">
+                    <i class="fas fa-users mr-3"></i>Community
+                </a>
+
+                <form action="https://stream.pretty.rip/search" method="get" class="w-full">
+                    <div class="relative">
+                        <input type="text" name="query" placeholder="Search movies, shows..."
+                            class="w-full bg-dark-accent px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-primary">
+                        <button type="submit" class="absolute right-2 top-2">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </button>
+                    </div>
+                </form>
+
+                
+                <a href="login.html" class="bg-brand-primary px-4 py-2 rounded-full text-center">
+                    Login
+                </a>
+                
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-20 container mx-auto px-4">
+        
+<div class="container mx-auto px-4">
+    <div class="mb-12 flex justify-between items-center">
+        <div>
+            <h1
+                class="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-pink-500">
+                Explore Movies
+            </h1>
+            <p class="text-gray-400 mt-2 max-w-xl">
+                Discover a world of cinema, from blockbuster hits to hidden gems
+            </p>
+        </div>
+    </div>
+
+    <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6">
+        <div x-data="{ 
+            filtersOpen: false, 
+            toggleFilters() {
+                this.filtersOpen = !this.filtersOpen;
+                console.log('Filters toggled:', this.filtersOpen);
+            }
+        }" class="w-full md:w-1/4">
+            <div class="md:hidden mb-4">
+                <button @click="toggleFilters()"
+                    class="w-full bg-brand-primary py-3 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-filter mr-2"></i>
+                    Show Filters
+                </button>
+            </div>
+
+            <div x-show="filtersOpen || window.innerWidth >= 768" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform scale-90"
+                x-transition:enter-end="opacity-100 transform scale-100"
+                x-transition:leave="transition ease-in duration-300"
+                x-transition:leave-start="opacity-100 transform scale-100"
+                x-transition:leave-end="opacity-0 transform scale-90"
+                class="md:block bg-dark-card rounded-xl border border-dark-accent p-6 shadow-lg"
+                :class="{'block': filtersOpen, 'hidden': !filtersOpen}" style="display: none;">
+                <form method="get" action="https://stream.pretty.rip/movies">
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="text-lg font-semibold mb-4 text-brand-primary flex items-center">
+                                <i class="fas fa-tags mr-3"></i>Genres
+                            </h4>
+                            <div class="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="action"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        Action
+                                    </span>
+                                </label>
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="adventure"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        Adventure
+                                    </span>
+                                </label>
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="animation"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        Animation
+                                    </span>
+                                </label>
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="comedy"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        Comedy
+                                    </span>
+                                </label>
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="crime"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        Crime
+                                    </span>
+                                </label>
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="documentary"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        Documentary
+                                    </span>
+                                </label>
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="drama"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        Drama
+                                    </span>
+                                </label>
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="family"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        Family
+                                    </span>
+                                </label>
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="fantasy"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        Fantasy
+                                    </span>
+                                </label>
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="history"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        History
+                                    </span>
+                                </label>
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="horror"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        Horror
+                                    </span>
+                                </label>
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="music"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        Music
+                                    </span>
+                                </label>
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="mystery"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        Mystery
+                                    </span>
+                                </label>
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="romance"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        Romance
+                                    </span>
+                                </label>
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="science fiction"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        Science Fiction
+                                    </span>
+                                </label>
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="tv movie"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        TV Movie
+                                    </span>
+                                </label>
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="thriller"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        Thriller
+                                    </span>
+                                </label>
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="war"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        War
+                                    </span>
+                                </label>
+                                
+                                <label
+                                    class="flex items-center space-x-2 bg-dark-accent rounded-md px-3 py-2 hover:bg-dark-bg/50 transition-all cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" name="genre" value="western"
+                                            class="absolute opacity-0 cursor-pointer h-0 w-0 peer" >
+                                        <div class="w-5 h-5 bg-dark-bg border border-gray-600 rounded 
+                                                    flex items-center justify-center 
+                                                    peer-checked:bg-brand-primary 
+                                                    peer-checked:border-brand-primary
+                                                    transition-all duration-200
+                                                    group-hover:border-brand-primary/50">
+                                            <svg class="w-4 h-4 text-white opacity-0 
+                                                        peer-checked:opacity-100 
+                                                        transition-opacity duration-200" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="text-sm text-gray-300 group-hover:text-brand-primary transition-colors">
+                                        Western
+                                    </span>
+                                </label>
+                                
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-lg font-semibold mb-4 text-brand-primary flex items-center">
+                                <i class="fas fa-calendar mr-3"></i>Year
+                            </h4>
+                            <select name="year"
+                                class="w-full bg-dark-accent rounded-lg py-3 px-4 border border-dark-bg focus:ring-2 focus:ring-brand-primary">
+                                <option value="">All Years</option>
+                                
+                                <option value="2024" >
+                                    2024
+                                </option>
+                                
+                                <option value="2023" >
+                                    2023
+                                </option>
+                                
+                                <option value="2022" >
+                                    2022
+                                </option>
+                                
+                                <option value="2021" >
+                                    2021
+                                </option>
+                                
+                                <option value="2020" >
+                                    2020
+                                </option>
+                                
+                                <option value="2019" >
+                                    2019
+                                </option>
+                                
+                                <option value="2018" >
+                                    2018
+                                </option>
+                                
+                                <option value="2017" >
+                                    2017
+                                </option>
+                                
+                                <option value="2016" >
+                                    2016
+                                </option>
+                                
+                                <option value="2015" >
+                                    2015
+                                </option>
+                                
+                                <option value="2014" >
+                                    2014
+                                </option>
+                                
+                                <option value="2013" >
+                                    2013
+                                </option>
+                                
+                                <option value="2012" >
+                                    2012
+                                </option>
+                                
+                                <option value="2011" >
+                                    2011
+                                </option>
+                                
+                                <option value="2010" >
+                                    2010
+                                </option>
+                                
+                                <option value="2009" >
+                                    2009
+                                </option>
+                                
+                                <option value="2008" >
+                                    2008
+                                </option>
+                                
+                                <option value="2007" >
+                                    2007
+                                </option>
+                                
+                                <option value="2006" >
+                                    2006
+                                </option>
+                                
+                                <option value="2005" >
+                                    2005
+                                </option>
+                                
+                                <option value="2004" >
+                                    2004
+                                </option>
+                                
+                                <option value="2003" >
+                                    2003
+                                </option>
+                                
+                                <option value="2002" >
+                                    2002
+                                </option>
+                                
+                                <option value="2001" >
+                                    2001
+                                </option>
+                                
+                                <option value="2000" >
+                                    2000
+                                </option>
+                                
+                                <option value="1999" >
+                                    1999
+                                </option>
+                                
+                                <option value="1998" >
+                                    1998
+                                </option>
+                                
+                                <option value="1997" >
+                                    1997
+                                </option>
+                                
+                                <option value="1996" >
+                                    1996
+                                </option>
+                                
+                                <option value="1995" >
+                                    1995
+                                </option>
+                                
+                                <option value="1994" >
+                                    1994
+                                </option>
+                                
+                                <option value="1993" >
+                                    1993
+                                </option>
+                                
+                                <option value="1992" >
+                                    1992
+                                </option>
+                                
+                                <option value="1991" >
+                                    1991
+                                </option>
+                                
+                            </select>
+                        </div>
+
+                        <div>
+                            <h4 class="text-lg font-semibold mb-4 text-brand-primary flex items-center">
+                                <i class="fas fa-star mr-3"></i>Minimum Rating
+                            </h4>
+                            <input type="range" name="rating" min="0" max="10" step="0.5"
+                                value="0" class="w-full h-2 bg-dark-accent rounded-lg appearance-none cursor-pointer
+                                [&::-webkit-slider-thumb]:appearance-none 
+                                [&::-webkit-slider-thumb]:w-4 
+                                [&::-webkit-slider-thumb]:h-4 
+                                [&::-webkit-slider-thumb]:bg-brand-primary 
+                                [&::-webkit-slider-thumb]:rounded-full
+                                [&::-webkit-slider-thumb]:cursor-pointer">
+                            <div class="text-center mt-2">
+                                Rating: <span id="ratingValue" class="text-brand-primary font-bold">
+                                    0
+                                </span>
+                            </div>
+                        </div>
+
+                        <button type="submit"
+                            class="w-full bg-brand-primary py-3 rounded-lg hover:bg-opacity-90 transition-all">
+                            Apply Filters
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="w-full md:w-3/4">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/1337309.html">
+                        <img src="../image.tmdb.org/t/p/w500/6VeDn4oIeUK4XwjWGWMb6qvMImQ.jpg" alt="Bangkok Breaking: Heaven and Hell"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">Bangkok Breaking: Heaven and Hell</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        6.6
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2024
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/1359227.html">
+                        <img src="../image.tmdb.org/t/p/w500/k3LGf9afqmUZiAJ9nffBinpOhOI.jpg" alt="LEGO Marvel Avengers: Mission Demolition"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">LEGO Marvel Avengers: Mission Demolition</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        6.7
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2024
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/38757.html">
+                        <img src="../image.tmdb.org/t/p/w500/ym7Kst6a4uodryxqbGOxmewF235.jpg" alt="Tangled"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">Tangled</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        7.6
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2010
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/838240.html">
+                        <img src="../image.tmdb.org/t/p/w500/ds402Qq09ybgBcXKiQNTZfzsP5o.jpg" alt="Robot Dreams"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">Robot Dreams</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        8.1
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2023
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/829560.html">
+                        <img src="../image.tmdb.org/t/p/w500/6FsGeIp7heHm5eh4tIxTzHIRxmt.jpg" alt="The Next 365 Days"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">The Next 365 Days</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        6.4
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2022
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/746036.html">
+                        <img src="../image.tmdb.org/t/p/w500/tSz1qsmSJon0rqjHBxXZmrotuse.jpg" alt="The Fall Guy"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">The Fall Guy</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        7.1
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2024
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/1064213.html">
+                        <img src="../image.tmdb.org/t/p/w500/21qUerwfWNTwbGKc2ZH5rXXAnwm.jpg" alt="Anora"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">Anora</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        7.2
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2024
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/675.html">
+                        <img src="../image.tmdb.org/t/p/w500/5aOyriWkPec0zUDxmHFP9qMmBaj.jpg" alt="Harry Potter and the Order of the Phoenix"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">Harry Potter and the Order of the Phoenix</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        7.7
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2007
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/949484.html">
+                        <img src="../image.tmdb.org/t/p/w500/lRBT73EWsiQPuqK3YS3BnBW0Zwi.jpg" alt="Hounds of War"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">Hounds of War</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        6.5
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2024
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/496243.html">
+                        <img src="../image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg" alt="Parasite"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">Parasite</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        8.5
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2019
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/609681.html">
+                        <img src="../image.tmdb.org/t/p/w500/9GBhzXMFjgcZ3FdR9w3bUMMTps5.jpg" alt="The Marvels"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">The Marvels</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        6.1
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2023
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/1290486.html">
+                        <img src="../image.tmdb.org/t/p/w500/4t80WORFWqDYf4BRwV2jrXNHJdN.jpg" alt="The Merry Gentlemen"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">The Merry Gentlemen</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        5.8
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2024
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/2062.html">
+                        <img src="../image.tmdb.org/t/p/w500/t3vaWRPSf6WjDSamIkKDs1iQWna.jpg" alt="Ratatouille"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">Ratatouille</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        7.8
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2007
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/1210794.html">
+                        <img src="../image.tmdb.org/t/p/w500/ildbg7ho14EHbt1fZWAkgqIyPqy.jpg" alt="Trouble"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">Trouble</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        6.8
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2024
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/414906.html">
+                        <img src="../image.tmdb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg" alt="The Batman"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">The Batman</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        7.7
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2022
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/799583.html">
+                        <img src="../image.tmdb.org/t/p/w500/8aF0iAKH9MJMYAZdi0Slg77RYa2.jpg" alt="The Ministry of Ungentlemanly Warfare"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">The Ministry of Ungentlemanly Warfare</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        7.1
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2024
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/420818.html">
+                        <img src="../image.tmdb.org/t/p/w500/dzBtMocZuJbjLOXvrl4zGYigDzh.jpg" alt="The Lion King"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">The Lion King</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        7.1
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2019
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/1244492.html">
+                        <img src="../image.tmdb.org/t/p/w500/AgBNLcHFEXCRFZuKv0H8RWMxNAJ.jpg" alt="Look Back"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">Look Back</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        8.0
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2024
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/447277.html">
+                        <img src="../image.tmdb.org/t/p/w500/ym1dxyOk4jFcSl4Q2zmRrA5BEEN.jpg" alt="The Little Mermaid"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">The Little Mermaid</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        6.3
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        2023
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div
+                    class="group relative overflow-hidden rounded-xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">
+                    <a href="details/movie/8587.html">
+                        <img src="../image.tmdb.org/t/p/w500/sKCr78MXSLixwmZ8DyJLrpMsd15.jpg" alt="The Lion King"
+                            class="w-full h-[350px] object-cover transition-transform group-hover:brightness-75">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
+                            <div class="text-white">
+                                <h3 class="text-lg font-bold mb-1 truncate">The Lion King</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star mr-1"></i>
+                                        8.3
+                                    </span>
+                                    <span class="text-sm text-gray-300">
+                                        1994
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+            </div>
+
+            <div class="mt-12 flex justify-center items-center space-x-4">
+                
+                <a href="moviesce37.html?page=12"
+                    class="px-6 py-3 bg-dark-card rounded-full hover:bg-brand-primary/20 transition-all 
+                     
+                    flex items-center">
+                    <i class="fas fa-chevron-left mr-2"></i>Previous
+                </a>
+                <span class="text-gray-400">
+                    Page 13
+                </span>
+                <a href="moviesa7f1.html?page=14"
+                    class="px-6 py-3 bg-dark-card rounded-full hover:bg-brand-primary/20 transition-all flex items-center">
+                    Next<i class="fas fa-chevron-right ml-2"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ratingInput = document.querySelector('input[name="rating"]');
+    const ratingValue = document.getElementById('ratingValue');
+
+    ratingInput.addEventListener('input', function () {
+        ratingValue.textContent = this.value;
+    });
+
+    function handleFilterVisibility() {
+        const filterSection = document.querySelector('[x-show]');
+        if (window.innerWidth >= 768) {
+            filterSection.classList.remove('hidden');
+            filterSection.classList.add('block');
+        } else {
+            filterSection.classList.remove('block');
+            filterSection.classList.add('hidden');
+        }
+    }
+
+    window.addEventListener('resize', handleFilterVisibility);
+    handleFilterVisibility();
+</script>
+
+    </main>
+
+    <footer class="bg-dark-card py-8 mt-8">
+        <div class="container mx-auto px-4 grid md:grid-cols-4 gap-8">
+            <div class="mb-6 md:mb-0">
+                <h4 class="font-bold text-lg mb-4 text-brand-primary">PrettyStream</h4>
+                <p class="text-gray-400">Your ultimate streaming companion</p>
+            </div>
+            <div class="mb-6 md:mb-0">
+                <h5 class="font-semibold mb-3">Quick Links</h5>
+                <ul class="space-y-2">
+                    <li><a href="index.html" class="hover:text-brand-primary">Home</a></li>
+                    <li><a href="movies.html" class="hover:text-brand-primary">Movies</a></li>
+                    <li><a href="tv-shows.html" class="hover:text-brand-primary">TV Shows</a></li>
+                    <li><a href="features.html" class="hover:text-brand-primary">Features</a></li>
+                </ul>
+            </div>
+            <div class="mb-6 md:mb-0">
+                <h5 class="font-semibold mb-3">Legal</h5>
+                <ul class="space-y-2">
+                    <li><a href="#" class="hover:text-brand-primary">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-brand-primary">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="font-semibold mb-3">Connect</h5>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-2xl hover:text-brand-primary"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-2xl hover:text-brand-primary"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-2xl hover:text-brand-primary"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-8 text-gray-500 px-4">
+            © 2024 PrettyStream. All Rights Reserved.
+        </div>
+    </footer>
+</body>
+
+
+<!-- Mirrored from stream.pretty.rip/movies?page=13 by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 05 Dec 2024 05:18:18 GMT -->
+</html>
